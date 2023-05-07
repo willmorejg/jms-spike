@@ -25,7 +25,7 @@ import lombok.Data;
 
 @Data
 public class MyMessage implements Serializable {
-    private static final long serialversionUID = -1L;
+    private static final long serialVersionUID = 2736063865517939827L;
 
     private String message;
 }
