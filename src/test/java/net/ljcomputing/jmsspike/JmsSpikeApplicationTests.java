@@ -42,7 +42,7 @@ class JmsSpikeApplicationTests {
     @Autowired private JsonService<MyMessage> myMessagJsonService;
 
     @Test
-    void sendMessage() throws JmsException, JsonProcessingException, InterruptedException {
+    void messageTest() throws JmsException, JsonProcessingException, InterruptedException {
         String queue = "sample";
         MyMessage msg = new MyMessage();
 
