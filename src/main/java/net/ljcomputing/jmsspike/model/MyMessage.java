@@ -18,23 +18,14 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.jmsspike;
+package net.ljcomputing.jmsspike.model;
 
-import net.ljcomputing.jmsspike.model.MyMessage;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jms.core.JmsTemplate;
+import java.io.Serializable;
+import lombok.Data;
 
-@SpringBootTest
-class JmsSpikeApplicationTests {
-    @Autowired private JmsTemplate jmsTemplate;
+@Data
+public class MyMessage implements Serializable {
+    private static final long serialversionUID = -1L;
 
-    @Test
-    void sendMessage() {
-        MyMessage msg = new MyMessage();
-        msg.setMessage("hello");
-        String queue = "sample";
-        jmsTemplate.convertAndSend(queue, msg.getMessage());
-    }
+    private String message;
 }
