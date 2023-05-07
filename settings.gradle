@@ -1,1 +1,3 @@
 rootProject.name = 'jms-spike'
+include ':insurance-xml'
+project(':insurance-xml').projectDir = new File('../insurance-xml')

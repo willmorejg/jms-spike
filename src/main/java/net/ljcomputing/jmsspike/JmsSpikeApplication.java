@@ -23,7 +23,7 @@ package net.ljcomputing.jmsspike;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "net.ljcomputing")
 public class JmsSpikeApplication {
 
     public static void main(String[] args) {

@@ -37,7 +37,7 @@ public class JacksonConfiguration {
 
     @Bean
     public ObjectMapper jsonMapper() {
-        ObjectMapper objectMapperObj = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         JavaTimeModule module = new JavaTimeModule();
         LocalDateTimeDeserializer localDateTimeDeserializer =
                 new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_FORMAT));
@@ -47,11 +47,12 @@ public class JacksonConfiguration {
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         module.addSerializer(localDateTimeSerializer);
 
-        objectMapperObj.registerModule(module);
-        objectMapperObj.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        objectMapperObj.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
-        objectMapperObj.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.registerModule(module);
+        mapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        mapper.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.writerWithDefaultPrettyPrinter();
 
-        return objectMapperObj;
+        return mapper;
     }
 }

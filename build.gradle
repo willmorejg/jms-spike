@@ -30,10 +30,13 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-activemq'
+  implementation 'org.springframework:spring-oxm'
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.15.0'
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
 
+  implementation project(":insurance-xml")
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -55,7 +58,7 @@ tasks.withType(JavaCompile) {
 
 bootRun {
     // Use Spring Boot DevTool only when we run Gradle bootRun task
-    classpath = sourceSets.main.runtimeClasspath //+ configurations.dev
+    classpath = sourceSets.main.runtimeClasspath + project(":insurance-xml").sourceSets.main.runtimeClasspath //+ configurations.dev
 }
 
 jar {
@@ -67,8 +70,8 @@ jar {
 
     manifest {
         attributes (
-          'Main-Class': 'net.ljcomputing.insured.InsuredApplication',
-          'Implementation-Title': 'Insured',
+          'Main-Class': 'net.ljcomputing.jmsspike.JmsSpikeApplication',
+          'Implementation-Title': 'JMS Spike Application',
           'Implementation-Version': version
         )
     }
