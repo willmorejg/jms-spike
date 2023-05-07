@@ -20,14 +20,38 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.jmsspike.configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JacksonConfiguration {
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+
     @Bean
     public ObjectMapper jsonMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapperObj = new ObjectMapper();
+        JavaTimeModule module = new JavaTimeModule();
+        LocalDateTimeDeserializer localDateTimeDeserializer =
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_FORMAT));
+        LocalDateTimeSerializer localDateTimeSerializer =
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_FORMAT));
+
+        module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
+        module.addSerializer(localDateTimeSerializer);
+
+        objectMapperObj.registerModule(module);
+        objectMapperObj.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        objectMapperObj.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        objectMapperObj.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        return objectMapperObj;
     }
 }

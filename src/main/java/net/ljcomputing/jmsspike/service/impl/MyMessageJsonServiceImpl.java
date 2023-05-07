@@ -18,23 +18,12 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.jmsspike.model;
+package net.ljcomputing.jmsspike.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.Data;
-import net.ljcomputing.jmsspike.configuration.JacksonConfiguration;
+import net.ljcomputing.jmsspike.model.MyMessage;
+import net.ljcomputing.jmsspike.service.JsonService;
+import org.springframework.stereotype.Component;
 
-@Data
-public class MyMessage implements Serializable {
-    private static final long serialVersionUID = 2736063865517939827L;
-
-    private UUID uuid = UUID.randomUUID();
-
-    private String message;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = JacksonConfiguration.DATE_FORMAT)
-    private LocalDateTime timestamp = LocalDateTime.now();
-}
+@Component
+public class MyMessageJsonServiceImpl extends JsonServiceImpl<MyMessage>
+        implements JsonService<MyMessage> {}

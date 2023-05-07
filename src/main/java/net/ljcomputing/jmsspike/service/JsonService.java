@@ -18,23 +18,29 @@ under the License.
 
 James G Willmore - LJ Computing - (C) 2023
 */
-package net.ljcomputing.jmsspike.model;
+package net.ljcomputing.jmsspike.service;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.Data;
-import net.ljcomputing.jmsspike.configuration.JacksonConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
-@Data
-public class MyMessage implements Serializable {
-    private static final long serialVersionUID = 2736063865517939827L;
+/** JSON mapping service. */
+public interface JsonService<T> {
+    /**
+     * Convert Object T to JSON String.
+     *
+     * @param obj
+     * @return
+     * @throws JsonProcessingException
+     */
+    String toJson(T obj) throws JsonProcessingException;
 
-    private UUID uuid = UUID.randomUUID();
-
-    private String message;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = JacksonConfiguration.DATE_FORMAT)
-    private LocalDateTime timestamp = LocalDateTime.now();
+    /**
+     * Convert JSON String to Object T.
+     *
+     * @param json
+     * @return
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
+    T fromJson(String json) throws JsonMappingException, JsonProcessingException;
 }

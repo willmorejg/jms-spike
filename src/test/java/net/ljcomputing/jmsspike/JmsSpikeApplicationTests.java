@@ -20,10 +20,15 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.jmsspike;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.ljcomputing.jmsspike.model.MyMessage;
+import net.ljcomputing.jmsspike.service.JsonService;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.JmsException;
@@ -31,17 +36,39 @@ import org.springframework.jms.core.JmsTemplate;
 
 @SpringBootTest
 class JmsSpikeApplicationTests {
+    private static final Logger log = LoggerFactory.getLogger(JmsSpikeApplicationTests.class);
+
     @Autowired private JmsTemplate jmsTemplate;
-    @Autowired private ObjectMapper jsonMapper;
+    @Autowired private JsonService<MyMessage> myMessagJsonService;
 
     @Test
     void sendMessage() throws JmsException, JsonProcessingException, InterruptedException {
-        MyMessage msg = new MyMessage();
-        msg.setMessage("hello");
         String queue = "sample";
-        jmsTemplate.convertAndSend(queue, jsonMapper.writeValueAsString(msg));
-        Thread.sleep(12000L);
+        MyMessage msg = new MyMessage();
+
+        msg.setMessage("hello");
+
+        String jsonString = myMessagJsonService.toJson(msg);
+
+        log.debug("msg - toString: {}", msg);
+        log.debug("jsonString: {}", jsonString);
+
+        jmsTemplate.convertAndSend(queue, jsonString);
+
+        Thread.sleep(3000L);
+
         Object obj = jmsTemplate.receiveAndConvert(queue);
-        System.out.println("obj: " + jsonMapper.readValue(obj.toString(), MyMessage.class));
+
+        log.debug("obj - toString: {}", obj);
+
+        assertNotNull(obj, "obj is null");
+
+        String responseString = obj.toString();
+        MyMessage responseMsg = myMessagJsonService.fromJson(responseString);
+
+        log.debug("responseString: {}", responseString);
+        log.debug("responseMsg: {}", responseMsg);
+
+        assertEquals(msg, responseMsg, "msg != responseMsg");
     }
 }
