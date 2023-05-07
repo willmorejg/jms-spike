@@ -32,16 +32,16 @@ import org.springframework.jms.core.JmsTemplate;
 @SpringBootTest
 class JmsSpikeApplicationTests {
     @Autowired private JmsTemplate jmsTemplate;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired private ObjectMapper jsonMapper;
 
     @Test
     void sendMessage() throws JmsException, JsonProcessingException, InterruptedException {
         MyMessage msg = new MyMessage();
         msg.setMessage("hello");
         String queue = "sample";
-        jmsTemplate.convertAndSend(queue, objectMapper.writeValueAsString(msg));
+        jmsTemplate.convertAndSend(queue, jsonMapper.writeValueAsString(msg));
         Thread.sleep(12000L);
         Object obj = jmsTemplate.receiveAndConvert(queue);
-        System.out.println("obj: " + objectMapper.readValue(obj.toString(), MyMessage.class));
+        System.out.println("obj: " + jsonMapper.readValue(obj.toString(), MyMessage.class));
     }
 }
