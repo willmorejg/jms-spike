@@ -20,21 +20,28 @@ James G Willmore - LJ Computing - (C) 2023
 */
 package net.ljcomputing.jmsspike;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.ljcomputing.jmsspike.model.MyMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 
 @SpringBootTest
 class JmsSpikeApplicationTests {
     @Autowired private JmsTemplate jmsTemplate;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void sendMessage() {
+    void sendMessage() throws JmsException, JsonProcessingException, InterruptedException {
         MyMessage msg = new MyMessage();
         msg.setMessage("hello");
         String queue = "sample";
-        jmsTemplate.convertAndSend(queue, msg.getMessage());
+        jmsTemplate.convertAndSend(queue, objectMapper.writeValueAsString(msg));
+        Thread.sleep(12000L);
+        Object obj = jmsTemplate.receiveAndConvert(queue);
+        System.out.println("obj: " + objectMapper.readValue(obj.toString(), MyMessage.class));
     }
 }
