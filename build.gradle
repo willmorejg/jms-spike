@@ -1,0 +1,116 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.10'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	id 'com.diffplug.spotless' version '6.15.0'
+	id 'org.ysb33r.doxygen' version '0.7.0'
+	id 'jacoco'
+	id 'project-report'
+ 	id 'build-dashboard'
+}
+
+group = 'net.ljcomputing'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+   mavenLocal()
+
+    maven {
+        url = uri('http://localhost:8081/repository/maven-central')
+        allowInsecureProtocol = true
+    }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-activemq'
+
+	compileOnly 'org.projectlombok:lombok'
+
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+ 
+tasks.withType(JavaCompile) {
+  dependsOn spotlessApply
+  options.encoding = 'UTF-8'
+}
+
+bootRun {
+    // Use Spring Boot DevTool only when we run Gradle bootRun task
+    classpath = sourceSets.main.runtimeClasspath //+ configurations.dev
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes (
+          'Main-Class': 'net.ljcomputing.insured.InsuredApplication',
+          'Implementation-Title': 'Insured',
+          'Implementation-Version': version
+        )
+    }
+}
+
+spotless {
+  java {
+    targetExclude("build/**")
+    licenseHeaderFile("$rootProject.projectDir/configuration/spotless/license-header.java").updateYearWithLatest(true)
+    toggleOffOn()
+    trimTrailingWhitespace()
+    endWithNewline()
+    removeUnusedImports()
+    importOrder('java', 'javax', '', '\\#')
+    googleJavaFormat('1.15.0').aosp().reflowLongStrings().groupArtifact('com.google.googlejavaformat:google-java-format')
+  }
+}
+
+javadoc {
+  exclude("build/generated/sources/**/*.java")
+	options.memberLevel = JavadocMemberLevel.PRIVATE
+  failOnError(false)
+}
+
+doxygen {
+  source 'src/main/java'
+  project_name 'Insured'
+  generate_latex true
+  generate_html true
+  optimize_output_java true
+}
+
+test {
+  testLogging.showStandardStreams = true
+	finalizedBy jacocoTestReport
+  useJUnitPlatform()
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+    }
+  }
+}
