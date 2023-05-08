@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamSource;
 import net.ljcomputing.insurancexml.domain.Address;
 import net.ljcomputing.insurancexml.domain.AddressType;
 import net.ljcomputing.insurancexml.domain.Addresses;
+import net.ljcomputing.insurancexml.domain.Coverage;
 import net.ljcomputing.insurancexml.domain.Driver;
 import net.ljcomputing.insurancexml.domain.Drivers;
 import net.ljcomputing.insurancexml.domain.Insured;
@@ -66,6 +67,16 @@ class JmsSpikeApplicationTests {
     @Autowired private Jaxb2Marshaller policyMarshaller;
 
     private Policy getPolicy() {
+        Coverage coverageA = new Coverage();
+        coverageA.setName("Coverage A");
+        coverageA.setCode("CVRA");
+        coverageA.setAmount("100000");
+
+        Coverage coverageB = new Coverage();
+        coverageB.setName("Coverage B");
+        coverageB.setCode("CVRB");
+        coverageB.setAmount("50000");
+
         Address physicalAddr = new Address();
         physicalAddr.setStreet1("1 Salem Road");
         physicalAddr.setCity("Smithville");
@@ -109,6 +120,7 @@ class JmsSpikeApplicationTests {
         paRisk.setRiskType(RiskType.PERSONAL_AUTO);
         paRisk.setDrivers(drivers);
         paRisk.setVehicle(vehicle);
+        paRisk.getCoverages().add(coverageA);
 
         Risks risks = new Risks();
         risks.getRisks().add(paRisk);
@@ -118,12 +130,13 @@ class JmsSpikeApplicationTests {
         insured.setGivenName("James");
         insured.setSurname("Willmore");
         insured.setBirthdate(LocalDate.of(1968, 1, 22));
-
         insured.setAddresses(addresses);
 
         Policy policy = new Policy();
         policy.setInsured(insured);
         policy.setRisks(risks);
+        policy.getCoverages().add(coverageA);
+        policy.getCoverages().add(coverageB);
 
         return policy;
     }
