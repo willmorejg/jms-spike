@@ -35,11 +35,10 @@ import net.ljcomputing.insurancexml.domain.AddressType;
 import net.ljcomputing.insurancexml.domain.Addresses;
 import net.ljcomputing.insurancexml.domain.Driver;
 import net.ljcomputing.insurancexml.domain.Drivers;
-import net.ljcomputing.insurancexml.domain.DweillingPropertyRisk;
 import net.ljcomputing.insurancexml.domain.Insured;
-import net.ljcomputing.insurancexml.domain.PersonalAutoRisk;
 import net.ljcomputing.insurancexml.domain.Policy;
 import net.ljcomputing.insurancexml.domain.Risk;
+import net.ljcomputing.insurancexml.domain.RiskType;
 import net.ljcomputing.insurancexml.domain.Risks;
 import net.ljcomputing.insurancexml.domain.USState;
 import net.ljcomputing.insurancexml.domain.Vehicle;
@@ -84,12 +83,10 @@ class JmsSpikeApplicationTests {
         addresses.getAddresses().add(physicalAddr);
         addresses.getAddresses().add(billingAddr);
 
-        DweillingPropertyRisk dpRisk = new DweillingPropertyRisk();
+        Risk dpRisk = new Risk();
+        dpRisk.setName("DP Risk");
+        dpRisk.setRiskType(RiskType.DWELLING_PROPERTY);
         dpRisk.setAddress(physicalAddr);
-
-        Risk risk = new Risk();
-        risk.setName("DP Risk");
-        risk.setDweillingPropertyRisk(dpRisk);
 
         Vehicle vehicle = new Vehicle();
         vehicle.setMake("Subaru");
@@ -107,17 +104,15 @@ class JmsSpikeApplicationTests {
         Drivers drivers = new Drivers();
         drivers.getDrivers().add(driver);
 
-        PersonalAutoRisk paRisk = new PersonalAutoRisk();
+        Risk paRisk = new Risk();
+        paRisk.setName("PA Risk");
+        paRisk.setRiskType(RiskType.PERSONAL_AUTO);
         paRisk.setDrivers(drivers);
         paRisk.setVehicle(vehicle);
 
-        Risk risk2 = new Risk();
-        risk2.setName("PA Risk");
-        risk2.setPersonalAutoRisk(paRisk);
-
         Risks risks = new Risks();
-        risks.getRisks().add(risk);
-        risks.getRisks().add(risk2);
+        risks.getRisks().add(paRisk);
+        risks.getRisks().add(dpRisk);
 
         Insured insured = new Insured();
         insured.setGivenName("James");
